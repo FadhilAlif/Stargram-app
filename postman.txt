@@ -1,0 +1,16 @@
+POST /users/register
+{
+    "full_name": "your fullname",
+    "email": "your@gmail.com",
+    "username": "yours",
+    "password": "yourpass",
+    "profile_image_url":"https://your.png",
+    "age": 30,
+    "phone_number": 890980
+}
+
+POST /users/login
+{
+    "email":"your@gmail.com",
+    "password":"yourpass"
+}

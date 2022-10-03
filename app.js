@@ -6,12 +6,9 @@ const router = require('./routes/routes');
 app.use(express.json()); 
 app.use(router);
  
-app.get('/', (req, res)=> {
-    res.send("Hello world");
-})
 
 app.listen(PORT, (req,res)=>{ 
-    console.log(`Server Berjalan pada PORT : `,PORT);
+    console.log(`Server run in PORT :`,PORT);
 }) 
  
 module.exports = app;
