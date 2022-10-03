@@ -1,5 +1,5 @@
 const { verify } = require("./../helpers/jwt")
-const { Player } = require("./../models/index")
+const { User } = require("./../models/index")
 
 
 async function authenticationMiddleware(req, res, next) {
@@ -8,17 +8,15 @@ async function authenticationMiddleware(req, res, next) {
     // const test = verify(token[1]) 
     // console.log(test)
 
-        const {authorization} = req.headers
-        token = authorization.split("Bearer ")
         try {
+            const {authorization} = req.headers
+            const token = authorization.split("Bearer ")
             if (token.length !==2) throw {name:"InvalidToken"}
             const { id , email } = verify(token[1])
-            const player = await Player.findOne({where:{id, email}})
-            if (!player) throw {name:"Unauthorized"}
-            req.player = {id, email}
+            req.users = {id, email}
             next()
         } catch (error) {
-            if(error.name === "InvalidToken"){
+            if(error.name === "JsonWebTokenError"){
                 res.status(400).json({message:"Invalid Token"})
             } else if(error.name === "Unauthorized"){
                 res.status(401).json({message:"Unauthorized"})

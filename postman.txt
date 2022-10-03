@@ -11,6 +11,6 @@ POST /users/register
 
 POST /users/login
 {
-    "email":"your@gmail.com",
+    "email":"justtono@gmail.com",
     "password":"yourpass"
 }
