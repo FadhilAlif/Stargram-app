@@ -16,8 +16,36 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Comment.init({
-    UserId: DataTypes.INTEGER,
-    PhotoId: DataTypes.INTEGER,
+    UserId:{
+      type:DataTypes.INTEGER,
+      allowNull: false,
+      validate: {
+        notNull:{
+          msg: "UserId cannot be null/ omitted"
+        },
+        notEmpty: {
+          msg: "UserId cannot be an emty string"
+        },
+        isInt:{
+          msg: "UserId must be integer"
+        }
+      }
+    },
+    PhotoId:{
+      type:DataTypes.INTEGER,
+      allowNull: false,
+      validate: {
+        notNull:{
+          msg: "PhotoId cannot be null/ omitted"
+        },
+        notEmpty: {
+          msg: "PhotoId cannot be an emty string"
+        },
+        isInt:{
+          msg: "PhotoId must be integer"
+        }
+      }
+    },
     comment: {
       type:DataTypes.TEXT,
       allowNull: false,

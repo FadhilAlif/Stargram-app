@@ -16,7 +16,7 @@ module.exports = {
       full_name:"Tono Sekrup",
       email:"justtono@gmail.com",
       username:"tons",
-      password:"justpass",
+      password:"$2b$10$zHsC9pb6TZyhUG3aUPDUI.sq19jnRUkyFKAirLxA47nWtze8iRVI2",
       profile_image_url:"http://tono-pict.png",
       age:22,
       phone_number:231,
