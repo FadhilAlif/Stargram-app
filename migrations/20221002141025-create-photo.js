@@ -10,13 +10,16 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       title: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING, 
+        allowNull: false
       },
       caption: {
-        type: Sequelize.TEXT
+        type: Sequelize.TEXT, 
+        allowNull: false
       },
       poster_image_url: {
-        type: Sequelize.TEXT
+        type: Sequelize.TEXT, 
+        allowNull: false
       },
       UserId: {
         type: Sequelize.INTEGER
