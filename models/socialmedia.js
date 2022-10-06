@@ -57,6 +57,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'SocialMedia',
+    tableName: 'SocialMedias',
   });
   return SocialMedia;
 };

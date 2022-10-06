@@ -50,6 +50,42 @@ class PhotoController {
                 res.status(500).json(error)
             }
         }
+    } 
+     
+    static async updatePhoto(req, res){ 
+        const {photoId} = req.params
+        const id = photoId
+        
+        const {title, caption, poster_image_url} = req.body 
+        const data = {title, caption, poster_image_url}
+        try {
+            const photos = await Photo.update(data, {where:{id}, attributes:['id','title','caption','poster_image_url'], returning: true}) 
+            if(photos[0]===0) throw ({name:"cantDelete"})
+            res.status(200).json(photos[1])
+        } catch (error) {
+            if(error.name === "cantDelete"){
+                res.status(400).json(error)
+            } else{
+                res.status(500).json(error)
+            }
+        }
+    } 
+     
+    static async removePhoto(req,res){ 
+        const {photoId} = req.params
+        const id = photoId
+        console.log(id);
+        try {
+            const photos = await Photo.destroy({ where: {id} })
+            if (!photos) throw { name: 'ErrNotFound' }
+            res.status(200).json({message:"Your photos has been succesfully deleted"})
+        } catch (error) {
+            if (error.name === 'ErrNotFound') {
+                res.status(404).json({ message: 'data not found' })
+            } else {
+                res.status(500).json(error.message)
+            }
+        }
     }
 }
 
