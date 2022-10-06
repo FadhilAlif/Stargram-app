@@ -29,7 +29,6 @@ class UserController{
                 res.status(400).json({ message: ValidationError })
             } else{
                 res.status(500).json(error)
-
             }
         }
     }
