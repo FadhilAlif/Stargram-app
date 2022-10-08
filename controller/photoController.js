@@ -1,18 +1,16 @@
 const {Photo, User, Comment} = require('./../models')
 
 
-
 class PhotoController {
 
     static async addPhoto(req, res){
-
         const UserId = req.users.id
         const {poster_image_url, title, caption} = req.body
         const data =  {poster_image_url, title, caption, UserId}
         try {
             const photos = await Photo.create(data)
             if (!photos) throw { name: 'SequelizeValidationError' }
-            res.status(201).json(photos)
+            res.status(201).json({photo:photos})
         } catch (error) {
             if (error.name === 'SequelizeValidationError') {
                 const ValidationError = error.errors.map((error) => {
@@ -42,11 +40,11 @@ class PhotoController {
                 }]
             })
             if(!photos) throw {name:"DataNotFound"}
-            res.status(200).json(photos)
+            res.status(200).json({photos})
         } catch (error) {
             if (error.name === "DataNotFound") {
                 res.status(404).json("Data Not Found")
-            } else {
+            }  else {
                 res.status(500).json(error)
             }
         }
