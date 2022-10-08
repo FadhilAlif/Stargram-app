@@ -57,19 +57,12 @@ class PhotoController {
         const {title, caption, poster_image_url} = req.body 
         const data = {title, caption, poster_image_url}
         try {
-            const photos = await Photo.update(data, {where:{id, UserId:req.users.id}, returning: true}) 
-            if(photos[0]===0) throw ({name:"cantUpdatePhoto"})
-            if (!photos) throw { name: 'SequelizeValidationError' }
-            const datas = photos[1][0]
-            res.status(200).json({photo:datas})
+            const photos = await Photo.update(data, {where:{id}, attributes:['id','title','caption','poster_image_url'], returning: true}) 
+            if(photos[0]===0) throw ({name:"Can't Update"})
+            res.status(200).json(photos[1])
         } catch (error) {
-            if(error.name === "cantUpdatePhoto" ){
-                res.status(400).json({message:`cant Update photos where photoId : ${id} or body request is null`})
-            } else if (error.name === 'SequelizeValidationError') {
-                const ValidationError = error.errors.map((error) => {
-                    return error.message
-                })
-                res.status(400).json({ message: ValidationError })
+            if(error.name === "Can't Update"){
+                res.status(400).json(error)
             } else{
                 res.status(500).json(error)
             }
@@ -79,14 +72,14 @@ class PhotoController {
     static async removePhoto(req,res){ 
         const {photoId} = req.params
         const id = photoId
-        
+        console.log(id);
         try {
-            const photos = await Photo.destroy({ where: {id, UserId:req.users.id} })
+            const photos = await Photo.destroy({ where: {id} })
             if (!photos) throw { name: 'ErrNotFound' }
             res.status(200).json({message:"Your photos has been succesfully deleted"})
         } catch (error) {
-            if (error.name === 'ErrNotFound' || error.name === 'SequelizeDatabaseError') {
-                res.status(404).json({ message: 'photoId not found' })
+            if (error.name === 'ErrNotFound') {
+                res.status(404).json({ message: 'data not found' })
             } else {
                 res.status(500).json(error.message)
             }

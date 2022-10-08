@@ -11,14 +11,12 @@ class UserController {
             const users = await User.create(data)
             if (!users) throw { name: 'SequelizeValidationError' }
             res.status(201).json({
-                user: {
-                    email: users.email,
-                    full_name: users.full_name,
-                    username: users.username,
-                    profile_image_url: users.profile_image_url,
-                    age: users.age,
-                    phone_number: users.phone_number
-                }
+                email: users.email,
+                full_name: users.full_name,
+                username : users.username,
+                profile_image_url : users.profile_image_url,
+                age: users.age,
+                phone_number: users.phone_number 
             })
         } catch (error) {
             if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError') {
@@ -28,6 +26,7 @@ class UserController {
                 res.status(400).json({ message: ValidationError })
             }  else {
                 res.status(500).json(error)
+
             }
         }
     }
