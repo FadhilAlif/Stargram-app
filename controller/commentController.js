@@ -25,18 +25,14 @@ class commentController {
         }
     }
     
-    //masih blm muncul
     static async getAllComment(req, res){
         try {
-            const comments = await Comment.findAll({
+            const comments = await Comment.findAll({ 
+                model:Comment,
                 where:{UserId:req.users.id},
                 include:[{
-                    model:Comment,
-                    attributes:['comment'],
-                    include:{
-                        model:Photo,
-                        attributes:['id', 'title','caption','poster_image_url']
-                    }
+                    model:Photo,
+                    attributes:['id', 'title','caption','poster_image_url']
                 },{
                     model:User,
                     attributes:['id','username','profile_image_url', 'phone_number']
@@ -48,40 +44,40 @@ class commentController {
             if (error.name === "DataNotFound") {
                 res.status(404).json("Data Not Found")
             } else {
-                res.status(500).json(error)
+                res.status(500).json(error) 
+                console.log(error)
             }   
         }
     } 
       
-    //blm diubah
+    
     static async updateComment(req, res){ 
-        const {photoId} = req.params
-        const id = photoId
+        const {commentId} = req.params
+        const id = commentId
         
-        const {title, caption, poster_image_url} = req.body 
-        const data = {title, caption, poster_image_url}
+        const {comment} = req.body 
+        const data = {comment}
         try {
-            const photos = await Photo.update(data, {where:{id}, attributes:['id','title','caption','poster_image_url'], returning: true}) 
-            if(photos[0]===0) throw ({name:"cantDelete"})
-            res.status(200).json(photos[1])
+            const comments = await Comment.update(data, {where:{id}, attributes:['id','comment','UserId','PhotoId'], returning: true}) 
+            if(comments[0]===0) throw ({name:"Can't Update"})
+            res.status(200).json(comments[1])
         } catch (error) {
-            if(error.name === "cantDelete"){
+            if(error.name === "Can't Update"){
                 res.status(400).json(error)
             } else{
                 res.status(500).json(error)
             }
         }
-    } 
+    }
      
-    //blm di ubah
     static async removeComment(req,res){ 
-        const {photoId} = req.params
-        const id = photoId
+        const {commentId} = req.params
+        const id = commentId
         console.log(id);
         try {
-            const photos = await Photo.destroy({ where: {id} })
-            if (!photos) throw { name: 'ErrNotFound' }
-            res.status(200).json({message:"Your photos has been succesfully deleted"})
+            const comments = await Comment.destroy({ where: {id} })
+            if (!comments) throw { name: 'ErrNotFound' }
+            res.status(200).json({message:"Your Comments has been succesfully deleted"})
         } catch (error) {
             if (error.name === 'ErrNotFound') {
                 res.status(404).json({ message: 'data not found' })

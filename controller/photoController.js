@@ -60,10 +60,10 @@ class PhotoController {
         const data = {title, caption, poster_image_url}
         try {
             const photos = await Photo.update(data, {where:{id}, attributes:['id','title','caption','poster_image_url'], returning: true}) 
-            if(photos[0]===0) throw ({name:"cantDelete"})
+            if(photos[0]===0) throw ({name:"Can't Update"})
             res.status(200).json(photos[1])
         } catch (error) {
-            if(error.name === "cantDelete"){
+            if(error.name === "Can't Update"){
                 res.status(400).json(error)
             } else{
                 res.status(500).json(error)
