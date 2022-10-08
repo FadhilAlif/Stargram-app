@@ -34,7 +34,7 @@ module.exports = {
         allowNull: false
       },
       phone_number: {
-        type: Sequelize.INTEGER, 
+        type: Sequelize.BIGINT, 
         allowNull: false
       },
       createdAt: {

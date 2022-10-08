@@ -12,15 +12,17 @@ class commentController {
         try {
             const comments = await Comment.create(data, {returning: true})
             if (!comments) throw { name: 'SequelizeValidationError' }
-            res.status(201).json(comments)
+            res.status(201).json({comment:comments})
         } catch (error) {
             if (error.name === 'SequelizeValidationError') {
                 const ValidationError = error.errors.map((error) => {
                     return error.message
                 })
                 res.status(400).json({ message: ValidationError })
-            } else {
-                res.status(500).json({ message: 'internal server error' })
+            } else if(error.name === 'SequelizeForeignKeyConstraintError'){
+                res.status(400).json({ message: "PhotoId not found"})
+            } else{
+                res.status(500).json(error)
             }
         }
     }
@@ -38,7 +40,7 @@ class commentController {
                 }]
             })
             if(!comments) throw {name:"DataNotFound"}
-            res.status(200).json(comments)
+            res.status(200).json({comments})
         } catch (error) {
             if (error.name === "DataNotFound") {
                 res.status(404).json("Data Not Found")
@@ -52,15 +54,22 @@ class commentController {
         const {commentId} = req.params
         const id = commentId
         
-        const {comment} = req.body 
-        const data = {comment}
+        const {comment, PhotoId} = req.body 
+        const data = {comment, PhotoId}
         try {
-            const comments = await Comment.update(data, {where:{id}, attributes:['id','comment'], returning: true}) 
-            if(comments[0]===0) throw ({name:"cantDelete"})
-            res.status(200).json(comments[1])
+            const comments = await Comment.update(data, {where:{id, UserId:req.users.id}, returning: true}) 
+            if(comments[0]===0) throw ({name:"cantUpdateComment"})
+            if (!comments) throw { name: 'SequelizeValidationError' }
+            const datas = comments[1][0]
+            res.status(200).json({comment:datas})
         } catch (error) {
-            if(error.name === "cantDelete"){
-                res.status(400).json(error)
+            if(error.name === "cantUpdateComment"){
+                res.status(400).json({message:`cant Update comment where photoId : ${id} or body request is null`})
+            } else if (error.name === 'SequelizeValidationError') {
+                const ValidationError = error.errors.map((error) => {
+                    return error.message
+                })
+                res.status(400).json({ message: ValidationError })
             } else{
                 res.status(500).json(error)
             }
@@ -70,16 +79,16 @@ class commentController {
     static async removeComment(req,res){ 
         const {commentId} = req.params
         const id = commentId
-        console.log(id);
+        
         try {
-            const comments = await Comment.destroy({ where: {id} })
+            const comments = await Comment.destroy({ where: {id, UserId:req.users.id} })
             if (!comments) throw { name: 'ErrNotFound' }
             res.status(200).json({message:"Your photos has been succesfully deleted"})
         } catch (error) {
-            if (error.name === 'ErrNotFound') {
-                res.status(404).json({ message: 'data not found' })
+            if (error.name === 'ErrNotFound' || error.name === 'SequelizeDatabaseError') {
+                res.status(404).json({ message: 'commentId not found' })
             } else {
-                res.status(500).json(error.message)
+                res.status(500).json({message:'Internal server error'})
             }
         }
     }
