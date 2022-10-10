@@ -10,7 +10,7 @@ class socialmediaController {
         try {
             const socialmedias = await SocialMedia.create(data)
             if (!socialmedias) throw { name: 'SequelizeValidationError' }
-            res.status(201).json(socialmedias)
+            res.status(201).json({social_media:socialmedias})
         } catch (error) {
             if (error.name === 'SequelizeValidationError') {
                 const ValidationError = error.errors.map((error) => {
@@ -34,12 +34,12 @@ class socialmediaController {
                 }]
             })
             if(!socialmedias) throw {name:"DataNotFound"}
-            res.status(200).json(socialmedias)
+            res.status(200).json({social_medias:socialmedias})
         } catch (error) {
             if (error.name === "DataNotFound") {
                 res.status(404).json("Data Not Found")
             } else {
-                res.status(500).json(error)
+                res.status(500).json({ message: 'internal server error' })
             }
         }
     } 
@@ -51,14 +51,21 @@ class socialmediaController {
         const {name, social_media_url} = req.body 
         const data = {name, social_media_url}
         try {
-            const socialmedias = await SocialMedia.update(data, {where:{id}, attributes:['id','name','social_media_url'], returning: true}) 
-            if(socialmedias[0]===0) throw ({name:"cantDelete"})
-            res.status(200).json(socialmedias[1])
+            const socialmedias = await SocialMedia.update(data, {where:{id, UserId:req.users.id}, returning: true}) 
+            if(socialmedias[0]===0) throw ({name:"cantUpdateSocialMedia"})
+            if (!socialmedias) throw { name: 'SequelizeValidationError' }
+            const datas = socialmedias[1][0] 
+            res.status(200).json({social_media:datas})
         } catch (error) {
-            if(error.name === "cantDelete"){
-                res.status(400).json(error)
+            if(error.name === "cantUpdateSocialMedia"){
+                res.status(400).json({message:`can't update social media where socialMediaId : ${id} or body request is null`})
+            }else if (error.name === 'SequelizeValidationError') {
+                const ValidationError = error.errors.map((error) => {
+                    return error.message
+                })
+                res.status(400).json({ message: ValidationError })
             } else{
-                res.status(500).json(error)
+                res.status(500).json({ message: 'internal server error' })
             }
         }
     } 
@@ -66,16 +73,16 @@ class socialmediaController {
     static async removeSocialMedia(req,res){ 
         const {socialMediaId} = req.params
         const id = socialMediaId
-        console.log(id);
+        
         try {
-            const socialmedias = await SocialMedia.destroy({ where: {id} })
+            const socialmedias = await SocialMedia.destroy({ where: {id, UserId:req.users.id} })
             if (!socialmedias) throw { name: 'ErrNotFound' }
-            res.status(200).json({message:"Your socialmedias has been succesfully deleted"})
+            res.status(200).json({message:"Your social media has been succesfully deleted"})
         } catch (error) {
-            if (error.name === 'ErrNotFound') {
-                res.status(404).json({ message: 'data not found' })
+            if (error.name === 'ErrNotFound' || error.name === 'SequelizeDatabaseError') {
+                res.status(404).json({ message: 'socialMediaId not found' })
             } else {
-                res.status(500).json(error.message)
+                res.status(500).json({ message: 'internal server error' })
             }
         }
     }
