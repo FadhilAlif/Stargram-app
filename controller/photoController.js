@@ -45,7 +45,7 @@ class PhotoController {
             if (error.name === "DataNotFound") {
                 res.status(404).json("Data Not Found")
             }  else {
-                res.status(500).json(error)
+                res.status(500).json({ message: 'internal server error' })
             }
         }
     } 
@@ -71,7 +71,7 @@ class PhotoController {
                 })
                 res.status(400).json({ message: ValidationError })
             } else{
-                res.status(500).json(error)
+                res.status(500).json({ message: 'internal server error' })
             }
         }
     } 
@@ -88,7 +88,7 @@ class PhotoController {
             if (error.name === 'ErrNotFound' || error.name === 'SequelizeDatabaseError') {
                 res.status(404).json({ message: 'photoId not found' })
             } else {
-                res.status(500).json(error.message)
+                res.status(500).json({ message: 'internal server error' })
             }
         }
     }
