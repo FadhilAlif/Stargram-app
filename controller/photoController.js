@@ -3,7 +3,7 @@ const {Photo, User, Comment} = require('./../models')
 
 class PhotoController {
 
-    static async addPhoto(req, res){
+    static async addPhoto(req, res, next){
         const UserId = req.users.id
         const {poster_image_url, title, caption} = req.body
         const data =  {poster_image_url, title, caption, UserId}
@@ -12,18 +12,19 @@ class PhotoController {
             if (!photos) throw { name: 'SequelizeValidationError' }
             res.status(201).json({photo:photos})
         } catch (error) {
-            if (error.name === 'SequelizeValidationError') {
-                const ValidationError = error.errors.map((error) => {
-                    return error.message
-                })
-                res.status(400).json({ message: ValidationError })
-            } else {
-                res.status(500).json({ message: 'internal server error' })
-            }
+            // if (error.name === 'SequelizeValidationError') {
+            //     const ValidationError = error.errors.map((error) => {
+            //         return error.message
+            //     })
+            //     res.status(400).json({ message: ValidationError })
+            // } else {
+            //     res.status(500).json({ message: 'internal server error' })
+            // }
+            next(error)
         }
     }
     
-    static async getAllPhoto(req, res){
+    static async getAllPhoto(req, res, next){
         try {
             const photos = await Photo.findAll({
                 where:{UserId:req.users.id},
@@ -42,15 +43,11 @@ class PhotoController {
             if(!photos) throw {name:"DataNotFound"}
             res.status(200).json({photos})
         } catch (error) {
-            if (error.name === "DataNotFound") {
-                res.status(404).json("Data Not Found")
-            }  else {
-                res.status(500).json({ message: 'internal server error' })
-            }
+            next(error)
         }
     } 
      
-    static async updatePhoto(req, res){ 
+    static async updatePhoto(req, res, next){ 
         const {photoId} = req.params
         const id = photoId
         
@@ -58,38 +55,25 @@ class PhotoController {
         const data = {title, caption, poster_image_url}
         try {
             const photos = await Photo.update(data, {where:{id, UserId:req.users.id}, returning: true}) 
-            if(photos[0]===0) throw ({name:"cantUpdatePhoto"})
+            if(photos[0]===0) throw ({name:"cantUpdate"})
             if (!photos) throw { name: 'SequelizeValidationError' }
             const datas = photos[1][0]
             res.status(200).json({photo:datas})
         } catch (error) {
-            if(error.name === "cantUpdatePhoto" ){
-                res.status(400).json({message:`cant Update photos where photoId : ${id} or body request is null`})
-            } else if (error.name === 'SequelizeValidationError') {
-                const ValidationError = error.errors.map((error) => {
-                    return error.message
-                })
-                res.status(400).json({ message: ValidationError })
-            } else{
-                res.status(500).json({ message: 'internal server error' })
-            }
+            next(error)
         }
     } 
      
-    static async removePhoto(req,res){ 
+    static async removePhoto(req,res, next){ 
         const {photoId} = req.params
         const id = photoId
-        console.log(id);
+        // console.log(id);
         try {
             const photos = await Photo.destroy({ where: {id, UserId:req.users.id} })
             if (!photos) throw { name: 'ErrNotFound' }
             res.status(200).json({message:"Your photos has been succesfully deleted"})
         } catch (error) {
-            if (error.name === 'ErrNotFound' || error.name === 'SequelizeDatabaseError') {
-                res.status(404).json({ message: 'photoId not found' })
-            } else {
-                res.status(500).json({ message: 'internal server error' })
-            }
+            next(error)
         }
     }
 }
