@@ -69,7 +69,7 @@ class UserController {
     static async Remove(req, res, next) {
         const { userId } = req.params
         const id = userId
-        console.log(id)
+        // console.log(id)
         try {
             if (id != req.users.id) throw { name: "notUserId" }
             const users = await User.destroy({ where: { id } })
