@@ -18,9 +18,9 @@ module.exports=
     "dialect": "postgres"
   },
   "production": {
-    "username": "root",
-    "password": null,
-    "database": "database_production",
+    "username": "postgres",
+    "password": "1234",
+    "database": "DB_FP_2_production",
     "host": "127.0.0.1",
     "dialect": "postgres"
   }

@@ -5,11 +5,26 @@ adalah backend project untuk membuat REST-API yang berguna untuk  menyimpan sebu
 
 ### Link Deployment
 ```text
-https:
+https://mygram-finalproject2-hacktiv8.herokuapp.com
 ```
  ---
 
 # Endpoint Users
+
+### Create Database
+```cmd
+npx sequelize db:create
+```
+
+### Migrate Database
+```cmd
+npx sequelize db:migrate
+```
+
+### Seeder Database
+```cmd
+npx sequelize db:seed:all
+```
 
 ## Register Users
 
