@@ -5,7 +5,7 @@ adalah backend project untuk membuat REST-API yang berguna untuk  menyimpan sebu
 
 ### Link Deployment
 ```text
-https://mygram-finalproject2-hacktiv8.herokuapp.com
+https://mygram-finalproject2-hacktiv8.up.railway.app
 ```
  ---
 
