@@ -7,7 +7,7 @@ const api = axios.create({
     }
 });
 
-// Interceptor untuk menyertakan token jika ada
+// Request interceptor untuk menambahkan token
 api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('token');
@@ -16,7 +16,21 @@ api.interceptors.request.use(
         }
         return config;
     },
-    (error) => Promise.reject(error)
+    (error) => {
+        return Promise.reject(error);
+    }
+);
+
+// Response interceptor untuk handle error
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response?.status === 401) {
+            localStorage.removeItem('token');
+            window.location.href = '/auth/login';
+        }
+        return Promise.reject(error);
+    }
 );
 
 export default api;
