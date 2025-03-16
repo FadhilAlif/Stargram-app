@@ -59,6 +59,12 @@ Body
 }
 ```
 
+## Get Data User Current
+
+```js
+localhost:3000/users/me
+```
+
 ## Update Users
 
 ```js

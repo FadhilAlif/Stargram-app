@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
 
 function hash(input){
     return bcrypt.hashSync(input, 10)

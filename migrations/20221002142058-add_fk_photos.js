@@ -6,7 +6,7 @@ module.exports = {
     queryInterface.addConstraint('Photos', {
       fields: ['UserId'],
       type: 'foreign key',
-      name: 'user_fk',
+      name: 'user_fk_photos',
       references: { //Required field
         table: 'Users',
         field: 'id'

@@ -1,6 +1,7 @@
 const { User } = require("./../models")
 const { compare } = require("./../helpers/hash")
 const { sign } = require("./../helpers/jwt")
+const { where } = require("sequelize")
 
 
 class UserController {
@@ -26,12 +27,42 @@ class UserController {
     static async SignIn(req, res, next) {
         const { email, password } = req.body
         try {
-            const users = await User.findOne({ where: { email } })
+            const users = await User.findOne({
+                where: {
+                    email: email
+                }
+            })
             if (!users) throw { name: "EmailNotFound" }
             if (!compare(password, users.password)) throw { name: "WrongPassword" }
             const token = sign({ id: users.id, email: users.email })
             res.status(200).json({ token })
 
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    static async GetUserCurrent(req, res, next) {
+        try {
+            const userId = req.users.id
+
+
+            const user = await User.findOne({
+                where: {
+                    id: userId
+                }
+            })
+
+            if (!user) throw { name: "DataNotFound" }
+
+            res.status(200).json({
+                email: user.email,
+                full_name: user.full_name,
+                username: user.username,
+                profile_image_url: user.profile_image_url,
+                age: user.age,
+                phone_number: user.phone_number
+            })
         } catch (error) {
             next(error)
         }
@@ -55,7 +86,7 @@ class UserController {
                 user: {
                     email: datas.email,
                     full_name: datas.full_name,
-                    username: datas.username,
+                    username: datas.username,  
                     profile_image_url: datas.profile_image_url,
                     age: datas.age,
                     phone_number: datas.phone_number

@@ -54,14 +54,14 @@ class commentController {
         }
     } 
      
-    static async removeComment(req,res, next){ 
+    static async removeComment(req, res, next){ 
         const {commentId} = req.params
         const id = commentId
         
         try {
             const comments = await Comment.destroy({ where: {id, UserId:req.users.id} })
             if (!comments) throw { name: 'ErrNotFound' }
-            res.status(200).json({message:"Your photos has been succesfully deleted"})
+            res.status(200).json({message:"Your Comments has been succesfully deleted"})
         } catch (error) {
             next(error)
         }
