@@ -9,9 +9,12 @@
     },
     "dependencies": {
         "@primeuix/themes": "^1.0.0",
+        "axios": "^1.8.3",
         "chart.js": "3.3.2",
+        "pinia": "^3.0.1",
         "primeicons": "^7.0.0",
         "primevue": "^4.3.1",
+        "sakai-vue": "file:",
         "tailwindcss-primeui": "^0.5.1",
         "vue": "^3.4.34",
         "vue-router": "^4.4.0"
