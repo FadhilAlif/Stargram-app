@@ -83,7 +83,7 @@ const resetForm = () => {
 
 <template>
     <div class="py-8 px-4 md:px-6 lg:px-8">
-        <div class="max-w-2xl mx-auto">
+        <div class="max-w-2xl mx-auto card">
             <!-- Header -->
             <div class="mb-8">
                 <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Upload Foto</h1>

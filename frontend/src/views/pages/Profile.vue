@@ -158,16 +158,16 @@ const handleDeleteAccount = async () => {
 
 <template>
     <div class="py-8 px-4 md:px-6 lg:px-8">
-        <div class="max-w-3xl mx-auto">
+        <div class="max-w-3xl mx-auto card">
             <!-- Header -->
             <div class="mb-8">
                 <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Profil Saya</h1>
                 <p class="text-gray-600 dark:text-gray-300">Kelola informasi profil Anda</p>
             </div>
 
-            <div class="bg-white dark:bg-surface-800 rounded-xl shadow-lg overflow-hidden">
+            <div class="overflow-hidden">
                 <!-- Profile Section -->
-                <div class="p-6">
+                <div class="p-2">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Profile Image Section -->
                         <div class="flex flex-col items-center space-y-4">
