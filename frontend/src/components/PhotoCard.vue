@@ -6,8 +6,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { useConfirm } from 'primevue/useconfirm';
 import { useToast } from 'primevue/usetoast';
 
-const FALLBACK_IMAGE =
-    'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iODAwIiBoZWlnaHQ9IjQwMCIgZmlsbD0iI2VlZWVlZSIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjQiIGZpbGw9IiM5OTk5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5HYW1iYXIgVGlkYWsgRGl0ZW11a2FuPC90ZXh0Pjwvc3ZnPg==';
+const FALLBACK_IMAGE = 'https://placehold.co/600x400';
 
 const props = defineProps({
     photo: {
@@ -28,6 +27,7 @@ onMounted(async () => {
     }
 });
 
+// State untuk komentar
 const newComment = ref('');
 const showComments = ref(false);
 const isSubmitting = ref(false);
@@ -49,6 +49,27 @@ const editPhotoForm = ref({
 // State untuk preview foto
 const previewImage = ref('');
 
+// State untuk dropdown menu
+const menu = ref();
+const menuItems = ref([
+    {
+        label: 'Edit',
+        icon: 'pi pi-pencil',
+        command: () => openEditPhotoDialog()
+    },
+    {
+        label: 'Hapus',
+        icon: 'pi pi-trash',
+        command: () => confirmDeletePhoto()
+    }
+]);
+
+// Fungsi untuk toggle dropdown menu
+const toggleMenu = (event) => {
+    menu.value.toggle(event);
+};
+
+// Fungsi untuk menambahkan komentar
 const handleAddComment = async () => {
     if (!newComment.value.trim()) return;
 
@@ -73,12 +94,14 @@ const handleAddComment = async () => {
     }
 };
 
+// Fungsi untuk membuka dialog edit komentar
 const openEditDialog = (comment) => {
     editingComment.value = comment;
     editedCommentText.value = comment.comment;
     editCommentDialog.value = true;
 };
 
+// Fungsi untuk mengedit komentar
 const handleEditComment = async () => {
     if (!editedCommentText.value.trim()) return;
 
@@ -89,10 +112,7 @@ const handleEditComment = async () => {
             PhotoId: props.photo.id
         });
 
-        // Tunggu response dari backend sebelum fetch data baru
         console.log('Edit comment response:', response.data);
-
-        // Refresh data feed untuk mendapatkan updatedAt terbaru
         await photoStore.fetchFeedData();
         editCommentDialog.value = false;
         toast.add({ severity: 'success', summary: 'Sukses', detail: 'Komentar berhasil diperbarui', life: 3000 });
@@ -104,6 +124,7 @@ const handleEditComment = async () => {
     }
 };
 
+// Fungsi untuk konfirmasi hapus komentar
 const confirmDeleteComment = (comment) => {
     confirm.require({
         message: 'Apakah Anda yakin ingin menghapus komentar ini?',
@@ -116,6 +137,7 @@ const confirmDeleteComment = (comment) => {
     });
 };
 
+// Fungsi untuk menghapus komentar
 const handleDeleteComment = async (comment) => {
     try {
         await deleteComment(comment.id);
@@ -127,11 +149,11 @@ const handleDeleteComment = async (comment) => {
     }
 };
 
+// Fungsi untuk mengecek kepemilikan komentar
 const isCommentOwner = (comment) => {
     if (!authStore.user || !comment) return false;
 
-    // Gunakan ID yang sudah kita set di authStore
-    const userId = authStore.user.id; // Sekarang ini akan bernilai 2
+    const userId = authStore.user.id;
     const commentUserId = Number(comment.UserId);
 
     console.log('Auth Store User:', authStore.user);
@@ -144,41 +166,32 @@ const isCommentOwner = (comment) => {
     return userId === commentUserId;
 };
 
+// Fungsi untuk memformat tanggal
 const formatDate = (dateString, updatedAt) => {
-    const date = new Date(dateString).toLocaleDateString('id-ID', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
+    const date = new Date(dateString).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
 
-    // Jika updatedAt ada dan berbeda dengan createdAt, tampilkan "Diubah pada"
     if (updatedAt && new Date(updatedAt).getTime() !== new Date(dateString).getTime()) {
-        const updateDate = new Date(updatedAt).toLocaleDateString('id-ID', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
+        const updateDate = new Date(updatedAt).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
         return `Diubah pada ${updateDate}`;
     }
 
     return date;
 };
 
+// Fungsi untuk mengecek kepemilikan foto
 const isPhotoOwner = (photo) => {
     if (!authStore.user || !photo) return false;
     return Number(authStore.user.id) === Number(photo.UserId);
 };
 
+// Fungsi untuk preview gambar
 const handleImagePreview = () => {
     if (editPhotoForm.value.poster_image_url.trim()) {
         previewImage.value = editPhotoForm.value.poster_image_url;
     }
 };
 
+// Fungsi untuk membuka dialog edit foto
 const openEditPhotoDialog = () => {
     editPhotoForm.value = {
         title: props.photo.title,
@@ -189,6 +202,7 @@ const openEditPhotoDialog = () => {
     editPhotoDialog.value = true;
 };
 
+// Fungsi untuk mengedit foto
 const handleEditPhoto = async () => {
     if (!editPhotoForm.value.title.trim() || !editPhotoForm.value.caption.trim() || !editPhotoForm.value.poster_image_url.trim()) {
         toast.add({ severity: 'error', summary: 'Error', detail: 'Semua field harus diisi', life: 3000 });
@@ -209,6 +223,7 @@ const handleEditPhoto = async () => {
     }
 };
 
+// Fungsi untuk konfirmasi hapus foto
 const confirmDeletePhoto = () => {
     confirm.require({
         message: 'Apakah Anda yakin ingin menghapus foto ini?',
@@ -221,6 +236,7 @@ const confirmDeletePhoto = () => {
     });
 };
 
+// Fungsi untuk menghapus foto
 const handleDeletePhoto = async () => {
     try {
         await deletePhoto(props.photo.id);
@@ -234,25 +250,30 @@ const handleDeletePhoto = async () => {
 </script>
 
 <template>
-    <div class="bg-white dark:bg-surface-800 rounded-xl shadow-lg overflow-hidden mb-6">
+    <div class="mb-6 overflow-hidden bg-white shadow-lg dark:bg-surface-800 rounded-xl">
         <!-- Header Kartu -->
-        <div class="p-4 flex items-center justify-between border-b dark:border-surface-700">
-            <div class="flex items-center space-x-3">
-                <img :src="photo.User?.profile_image_url || FALLBACK_IMAGE" alt="Profile" class="w-10 h-10 rounded-full object-cover" @error="$event.target.src = FALLBACK_IMAGE" />
-                <div>
-                    <h3 class="font-medium text-gray-900 dark:text-white">{{ photo.User?.username || 'User' }}</h3>
-                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ formatDate(photo.createdAt, photo.updatedAt) }}</p>
+        <div class="flex items-center justify-between p-2 border-b border-gray-200 dark:border-surface-700">
+            <div class="flex items-center gap-4">
+                <!-- Foto Profil -->
+                <img :src="photo.User?.profile_image_url || FALLBACK_IMAGE" alt="Profile" class="object-cover rounded-full w-7 h-7" @error="$event.target.src = FALLBACK_IMAGE" />
+
+                <!-- Info Pengguna -->
+                <div class="flex flex-col leading-tight">
+                    <p class="text-base font-medium text-gray-900 dark:text-white">
+                        {{ photo.User?.username }}
+                    </p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">
+                        {{ formatDate(photo.createdAt, photo.updatedAt) }}
+                    </p>
                 </div>
             </div>
 
-            <!-- Action buttons untuk edit/delete foto -->
-            <div v-if="isPhotoOwner(photo)" class="flex items-center space-x-2">
-                <button @click="openEditPhotoDialog" class="text-blue-600 hover:text-blue-800 p-2">
-                    <i class="pi pi-pencil"></i>
+            <!-- Dropdown Menu untuk Action (Edit/Delete) -->
+            <div v-if="isPhotoOwner(photo)" class="relative">
+                <button @click="toggleMenu" class="p-1.5 text-gray-600 transition-colors rounded-full hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-surface-700">
+                    <i class="pi pi-ellipsis-v"></i>
                 </button>
-                <button @click="confirmDeletePhoto" class="text-red-600 hover:text-red-800 p-2">
-                    <i class="pi pi-trash"></i>
-                </button>
+                <Menu ref="menu" :model="menuItems" :popup="true" class="mt-2" />
             </div>
         </div>
 
@@ -261,12 +282,14 @@ const handleDeletePhoto = async () => {
 
         <!-- Konten -->
         <div class="p-4">
-            <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">{{ photo.title }}</h2>
+            <h2 class="mb-2 text-xl font-semibold text-gray-900 dark:text-white">
+                {{ photo.title }}
+            </h2>
             <p class="text-gray-600 dark:text-gray-300">{{ photo.caption }}</p>
 
             <!-- Komentar Section -->
             <div class="mt-4">
-                <button @click="showComments = !showComments" class="text-sm text-green-600 dark:text-gray-400 hover:text-green-400 dark:hover:text-white">
+                <button @click="showComments = !showComments" class="text-sm text-green-600 dark:text-green-400 hover:text-green-400 dark:hover:text-green-300">
                     {{ showComments ? 'Sembunyikan Komentar' : `Lihat ${photo.Comments?.length || 0} Komentar` }}
                 </button>
 
@@ -274,33 +297,39 @@ const handleDeletePhoto = async () => {
                 <div class="mt-4">
                     <div class="flex gap-2">
                         <input v-model="newComment" type="text" placeholder="Tulis komentar..." class="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" @keyup.enter="handleAddComment" />
-                        <button @click="handleAddComment" :disabled="!newComment.trim() || isSubmitting" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        <button @click="handleAddComment" :disabled="!newComment.trim() || isSubmitting" class="px-4 py-2 text-white transition-colors rounded-lg bg-primary hover:bg-primary-dark disabled:opacity-50 disabled:cursor-not-allowed">
                             {{ isSubmitting ? 'Mengirim...' : 'Kirim' }}
                         </button>
                     </div>
-                    <p v-if="errorMessage" class="mt-2 text-sm text-red-600">{{ errorMessage }}</p>
+                    <p v-if="errorMessage" class="mt-2 text-sm text-red-600">
+                        {{ errorMessage }}
+                    </p>
                 </div>
 
                 <!-- Daftar Komentar -->
                 <div v-if="showComments" class="mt-4 space-y-3">
                     <div v-for="comment in photo.Comments" :key="comment.id" class="flex space-x-3">
-                        <img :src="comment.User?.profile_image_url || FALLBACK_IMAGE" alt="Commenter" class="w-8 h-8 rounded-full object-cover" @error="$event.target.src = FALLBACK_IMAGE" />
+                        <img :src="comment.User?.profile_image_url || FALLBACK_IMAGE" alt="Commenter" class="object-cover w-8 h-8 rounded-full" @error="$event.target.src = FALLBACK_IMAGE" />
                         <div class="flex-1">
-                            <div class="bg-gray-100 dark:bg-surface-700 rounded-lg p-3 relative hover:bg-gray-200 dark:hover:bg-surface-600 transition-colors">
-                                <p class="font-medium text-gray-900 dark:text-white">{{ comment.User?.username }}</p>
+                            <div class="relative p-3 transition-colors bg-gray-100 rounded-lg dark:bg-surface-700 hover:bg-gray-200 dark:hover:bg-surface-600">
+                                <p class="font-medium text-gray-900 dark:text-white">
+                                    {{ comment.User?.username }}
+                                </p>
                                 <p class="text-gray-600 dark:text-gray-300">{{ comment.comment }}</p>
 
-                                <!-- Action buttons untuk edit/delete -->
-                                <div v-if="isCommentOwner(comment)" class="absolute top-2 right-2 flex items-center space-x-2 bg-white dark:bg-surface-800 rounded-lg px-2 py-1 shadow-sm">
-                                    <button @click="openEditDialog(comment)" class="text-blue-600 hover:text-blue-800 p-1">
-                                        <i class="pi pi-pencil text-sm"></i>
+                                <!-- Action buttons untuk edit/delete komentar -->
+                                <div v-if="isCommentOwner(comment)" class="absolute flex items-center px-2 py-1 space-x-2 bg-white rounded-lg shadow-sm top-2 right-2 dark:bg-surface-800">
+                                    <button @click="openEditDialog(comment)" class="p-1 text-blue-600 hover:text-blue-800">
+                                        <i class="text-sm pi pi-pencil"></i>
                                     </button>
-                                    <button @click="confirmDeleteComment(comment)" class="text-red-600 hover:text-red-800 p-1">
-                                        <i class="pi pi-trash text-sm"></i>
+                                    <button @click="confirmDeleteComment(comment)" class="p-1 text-red-600 hover:text-red-800">
+                                        <i class="text-sm pi pi-trash"></i>
                                     </button>
                                 </div>
                             </div>
-                            <p class="text-xs text-gray-500 mt-1">{{ formatDate(comment.createdAt, comment.updatedAt) }}</p>
+                            <p class="mt-1 text-xs text-gray-500">
+                                {{ formatDate(comment.createdAt, comment.updatedAt) }}
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -323,12 +352,12 @@ const handleDeletePhoto = async () => {
 
     <!-- Dialog Edit Foto -->
     <Dialog v-model:visible="editPhotoDialog" modal header="Edit Foto" :style="{ width: '60vw' }" class="p-fluid">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
             <!-- Preview Foto -->
             <div class="preview-container">
-                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Preview Foto</h3>
+                <h3 class="mb-4 text-lg font-medium text-gray-900 dark:text-white">Preview Foto</h3>
                 <div class="relative w-full h-[300px] bg-gray-100 dark:bg-surface-700 rounded-lg overflow-hidden mb-4">
-                    <img v-if="previewImage" :src="previewImage" alt="Preview" class="w-full h-full object-contain" @error="$event.target.src = FALLBACK_IMAGE" />
+                    <img v-if="previewImage" :src="previewImage" alt="Preview" class="object-contain w-full h-full" @error="$event.target.src = FALLBACK_IMAGE" />
                     <div v-else class="flex items-center justify-center h-full">
                         <span class="text-gray-400">Preview akan muncul di sini</span>
                     </div>
@@ -337,21 +366,21 @@ const handleDeletePhoto = async () => {
 
             <!-- Form Edit -->
             <div class="form-container">
-                <div class="field mb-4">
-                    <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Judul Foto</label>
+                <div class="mb-4 field">
+                    <label for="title" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">Judul Foto</label>
                     <InputText id="title" v-model="editPhotoForm.title" placeholder="Masukkan judul foto" class="w-full p-inputtext-sm" :class="{ 'p-invalid': !editPhotoForm.title.trim() }" />
                 </div>
 
-                <div class="field mb-4">
-                    <label for="url" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">URL Foto</label>
+                <div class="mb-4 field">
+                    <label for="url" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">URL Foto</label>
                     <div class="flex gap-2">
                         <InputText id="url" v-model="editPhotoForm.poster_image_url" placeholder="Masukkan URL foto" class="w-full p-inputtext-sm" :class="{ 'p-invalid': !editPhotoForm.poster_image_url.trim() }" @input="handleImagePreview" />
                         <Button type="button" icon="pi pi-eye" @click="handleImagePreview" class="p-button-secondary p-button-sm" />
                     </div>
                 </div>
 
-                <div class="field mb-4">
-                    <label for="caption" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Caption</label>
+                <div class="mb-4 field">
+                    <label for="caption" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">Caption</label>
                     <Textarea id="caption" v-model="editPhotoForm.caption" rows="4" placeholder="Tulis caption untuk foto..." class="w-full" :class="{ 'p-invalid': !editPhotoForm.caption.trim() }" />
                 </div>
             </div>
