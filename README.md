@@ -131,14 +131,3 @@ API berjalan di `http://localhost:3000`
   ```
 - **Port konflik?**  
   → Ubah port di `.env` atau `vite.config.js`.
-
----
-
-## 📩 Kontak
-
-📧 Email: fadhil.alifp@gmail.com  
-🐙 GitHub: [FadhilAlif](https://github.com/FadhilAlif)  
-
----
-
-README ini sudah disederhanakan dan menggabungkan bagian frontend & backend secara ringkas. Semoga membantu! 🚀
