@@ -1,338 +1,144 @@
-# Final Project 2
 
-## MyGram Apps with NodeJS
-adalah backend project untuk membuat REST-API yang berguna untuk  menyimpan sebuah foto dan memberikan comment. yang mana setiap user dapat menambahkan foto dirinya sendiri dan menambahkan comment di fotonya sendiri maupun foto orang lain.
 
-### Link Deployment
-```text
-https://mygram-finalproject2-hacktiv8.up.railway.app
-```
- ---
 
-# Endpoint Users
+# Stargram - Simple Social Media App
 
-### Create Database
-```cmd
-npx sequelize db:create
-```
+Stargram adalah aplikasi media sosial sederhana yang memungkinkan pengguna untuk mengunggah foto, mengelola komentar, dan berbagi tautan media sosial.
 
-### Migrate Database
-```cmd
-npx sequelize db:migrate
-```
+## ✨ Fitur Utama
 
-### Seeder Database
-```cmd
-npx sequelize db:seed:all
-```
+- **🔐 User Authentication:** Register, Login, Logout, Get Current User
+- **👤 User Profile Management:** View, Update, Edit, Delete Profile
+- **🖼 Photo Management:** Upload, Edit, Delete, View Photos
+- **💬 Comment System:** Post, Edit, Delete, View Comments
+- **🌐 Social Media Links:** Add, Edit, Delete, View Links
+- **🏠 Home Feed:** Menampilkan daftar foto dan komentar dari pengguna
 
-## Register Users
+---
 
-```js
-localhost:3000/users/register
-```
+## 📄 Halaman yang Tersedia
 
-Body
-```json
-{
-  "full_name": "string",
-  "email": "string",
-  "username": "string",
-  "password": "string",
-  "profile_image_url": "string",
-  "age": "int",
-  "phone_number": "int"
-}
-```
+- **🏠 Home Page**: Menampilkan semua foto dan komentar
+- **🔐 Auth Pages**: Register, Login, Logout
+- **👤 Profile Page**: Lihat, edit, hapus profil
+- **🖼 Photo Management**: Unggah, edit, hapus foto
+- **💬 Comment System**: Tambah, edit, hapus komentar
+- **🌐 Social Media Management**: Tambah, edit, hapus tautan sosial media
 
-## Login Users
+---
 
-```js
-localhost:3000/users/login
+## 🛠 Teknologi yang Digunakan
+
+### **Frontend**
+- **Vue.js 3**, **PrimeVue**, **Tailwind CSS**, **Pinia**, **Vue Router**, **Axios**
+
+### **Backend**
+- **Node.js**, **Express.js**, **Sequelize ORM**, **MySQL**
+- **JWT Authentication**, **BCrypt**, **Multer**
+- **Railway Deployment** → [API Link](https://mygram-finalproject2-hacktiv8.up.railway.app)
+
+---
+
+## 🚀 Instalasi & Menjalankan Aplikasi
+
+### 1️⃣ Clone Repositori
+
+```sh
+git clone https://github.com/<username>/<repo>.git
+cd <repo>
 ```
 
-Body
-```json
-{
-  "email": "string",
-  "password": "string"
-}
+### 2️⃣ Instalasi & Konfigurasi
+
+**Frontend**
+```sh
+cd frontend
+npm install
+cp .env.example .env # Sesuaikan VITE_API_URL
+npm run dev
+```
+Aplikasi berjalan di `http://localhost:5173`
+
+**Backend**
+```sh
+cd backend
+npm install
+cp .env.example .env # Sesuaikan konfigurasi database
+npx sequelize db:create && npx sequelize db:migrate && npx sequelize db:seed:all
+npm run dev
+```
+API berjalan di `http://localhost:3000`
+
+---
+
+## 📂 Struktur Direktori
+
+```
+├── frontend/                # Frontend Vue.js
+│   ├── src/                 # Kode sumber frontend
+│   ├── public/              # File statis
+│   ├── .env                 # Konfigurasi frontend
+│   ├── package.json         # Dependensi frontend
+├── backend/                 # Backend Node.js + Express.js
+│   ├── src/                 # Kode sumber backend
+│   ├── migrations/          # File migrasi database
+│   ├── seeders/             # Data dummy awal
+│   ├── .env                 # Konfigurasi backend
+│   ├── package.json         # Dependensi backend
+├── README.md                # Dokumentasi proyek
+└── .gitignore               # File yang tidak perlu di-track Git
 ```
 
-## Get Data User Current
+---
 
-```js
-localhost:3000/users/me
-```
+## 🔗 API Endpoint (Backend)
 
-## Update Users
+### **User Authentication**
+- **POST** `/users/register` – Register user
+- **POST** `/users/login` – Login user
+- **GET** `/users/me` – Get current user (requires token)
+- **PUT** `/users/:userId` – Update user
+- **DELETE** `/users/:userId` – Delete user
 
-```js
-localhost:3000/users/:userId
-```
+### **Photo Management**
+- **POST** `/photos` – Upload photo
+- **GET** `/photos` – Get user photos
+- **PUT** `/photos/:photoId` – Update photo
+- **DELETE** `/photos/:photoId` – Delete photo
 
-Authorization
-```js
-<token>
-```
+### **Comment System**
+- **POST** `/comments` – Add comment
+- **GET** `/comments` – Get comments
+- **PUT** `/comments/:commentId` – Update comment
+- **DELETE** `/comments/:commentId` – Delete comment
 
-Params
-```js
-UserId = "int"
-```
+### **Social Media Links**
+- **POST** `/socialmedias` – Add social media link
+- **GET** `/socialmedias` – Get social media links
+- **PUT** `/socialmedias/:socialMediaId` – Update social media link
+- **DELETE** `/socialmedias/:socialMediaId` – Delete social media link
 
-Body
-```json
-{
-  "full_name": "string",
-  "email": "string",
-  "username": "string",
-  "profile_image_url": "string",
-  "age": "int",
-  "phone_number": "int"
-}
-```
+---
 
-## Delete Users
+## ⚠️ Troubleshooting
 
-```js
-localhost:3000/users/:userId
-```
+- **Aplikasi tidak terhubung ke API?**  
+  → Cek `.env` pada frontend dan backend, pastikan backend berjalan.  
+- **Database error?**  
+  → Jalankan ulang:  
+  ```sh
+  npx sequelize db:migrate:undo:all && npx sequelize db:migrate && npx sequelize db:seed:all
+  ```
+- **Port konflik?**  
+  → Ubah port di `.env` atau `vite.config.js`.
 
-Authorization
-```js
-<token>
-```
+---
 
-Params
-```js
-UserId = "int"
-```
+## 📩 Kontak
 
-# Endpoint Photos
+📧 Email: fadhil.alifp@gmail.com  
+🐙 GitHub: [FadhilAlif](https://github.com/FadhilAlif)  
 
-## Add Photos
+---
 
-```js
-localhost:3000/photos
-```
-
-Authorization
-```js
-<token>
-```
-
-Body
-```json
-{
-  "title": "strig",
-  "caption": "string",
-  "poster_image_url": "string"
-}
-```
-
-## Get All Photos ByUserId
-
-```js
-localhost:3000/photos
-```
-
-Authorization
-```js
-<token>
-```
-
-## Update Photos
-
-```js
-localhost:3000/photos/:photoId
-```
-
-Authorization
-```js
-<token>
-```
-
-Params
-```js
-photoId = "int"
-```
-
-Body
-```json
-{
-  "title": "strig",
-  "caption": "string",
-  "poster_image_url": "string"
-}
-```
-
-## Delete Photos
-
-```js
-localhost:3000/photos/:photoId
-```
-
-Authorization
-```js
-<token>
-```
-
-Params
-```js
-photoId = "int"
-```
-
-Body
-```json
-{
-  "title": "strig",
-  "caption": "string",
-  "poster_image_url": "string"
-}
-```
-
-# Endpoint Comment
-
-## Add Comment
-
-```js
-localhost:3000/comments
-```
-
-Authorization
-```js
-<token>
-```
-
-Body
-```json
-{
-  "comment": "string",
-  "PhotoId": "int"
-}
-```
-
-## Get All Comment by UserId
-
-```js
-localhost:3000/comments
-```
-
-Authorization
-```js
-<token>
-```
-
-## Update Comment
-
-```js
-localhost:3000/comments/:commentId
-```
-
-Authorization
-```js
-<token>
-```
-
-Params
-```js
-commentId = "int"
-```
-
-Body
-```json
-{
-  "comment": "string",
-  "PhotoId": "int"
-}
-```
-
-## Delete Comment
-
-```js
-localhost:3000/comment/:commentId
-```
-
-Authorization
-```js
-<token>
-```
-
-Params
-```js
-commentId = "int"
-```
-
-# Endpoint Social Media
-
-## Add Social Media
-
-```js
-localhost:3000/socialmedias
-```
-
-Authorization
-```js
-<token>
-```
-
-Body
-```json
-{
-  "name": "string",
-  "social_media_url": "string"
-}
-```
-
-## Get Social Media by UserId
-
-```js
-localhost:3000/socialmedias
-```
-
-Authorization
-```js
-<token>
-```
-
-## Update Social Media
-
-```js
-localhost:3000/socialmedias/:socialMediaId
-```
-
-Authorization
-```js
-<token>
-```
-
-Params
-```js
-socialMediaId = "int"
-```
-
-Body
-```json
-{
-  "name": "string",
-  "social_media_url": "string"
-}
-```
-
-## Delete Social Media
-
-```js
-localhost:3000/socialmedias/:socialMediaId
-```
-
-Authorization
-```js
-<token>
-```
-
-Params
-```js
-socialMediaId = "int"
-```
-
+README ini sudah disederhanakan dan menggabungkan bagian frontend & backend secara ringkas. Semoga membantu! 🚀
