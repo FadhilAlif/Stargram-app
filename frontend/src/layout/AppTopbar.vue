@@ -3,6 +3,7 @@ import { useLayout } from '@/layout/composables/layout';
 import { useAuthStore } from '@/stores/authStore';
 import { useRouter } from 'vue-router';
 import { computed } from 'vue';
+import AppConfigurator from './AppConfigurator.vue';
 
 // Layout utilities
 const { toggleDarkMode, isDarkTheme } = useLayout();
@@ -37,12 +38,30 @@ const handleLogout = () => {
                 <button type="button" class="layout-topbar-action" @click="toggleDarkMode" v-tooltip.bottom="'Toggle Dark Mode'">
                     <i :class="['pi', { 'pi-moon': isDarkTheme, 'pi-sun': !isDarkTheme }]"></i>
                 </button>
+                <div class="relative">
+                    <button
+                        v-styleclass="{ selector: '@next', enterFromClass: 'hidden', enterActiveClass: 'animate-scalein', leaveToClass: 'hidden', leaveActiveClass: 'animate-fadeout', hideOnOutsideClick: true }"
+                        type="button"
+                        class="layout-topbar-action layout-topbar-action-highlight"
+                        v-tooltip.bottom="'Customize Theme'"
+                    >
+                        <i class="pi pi-palette"></i>
+                    </button>
+                    <AppConfigurator />
+                </div>
             </div>
+
+            <button
+                class="layout-topbar-menu-button layout-topbar-action"
+                v-styleclass="{ selector: '@next', enterFromClass: 'hidden', enterActiveClass: 'animate-scalein', leaveToClass: 'hidden', leaveActiveClass: 'animate-fadeout', hideOnOutsideClick: true }"
+            >
+                <i class="pi pi-ellipsis-v"></i>
+            </button>
 
             <div class="items-center hidden gap-3 layout-topbar-menu lg:flex">
                 <!-- Profile Button -->
                 <button type="button" class="flex items-center gap-2 rounded-md layout-topbar-action hover:bg-gray-100 dark:hover:bg-gray-800" @click="router.push('/profile')" v-tooltip.bottom="'Go to Profile'">
-                    <img :src="profileImageUrl" alt="Profile picture" class="object-cover w-8 h-8 rounded-full" @error="profileImageUrl = 'https://placehold.co/400'" />
+                    <img :src="profileImageUrl" alt="Profile picture" class="object-cover w-10 h-10 rounded-full" @error="profileImageUrl = 'https://placehold.co/400'" />
                     <span class="font-medium">{{ username }}</span>
                 </button>
 
