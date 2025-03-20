@@ -58,6 +58,9 @@ cp .env.example .env # Sesuaikan VITE_API_URL
 npm run dev
 ```
 Aplikasi berjalan di `http://localhost:5173`
+Login Menggunakan Dummy Admin :
+email   : admin@gmaiil.com
+pass    : admin123
 
 **Backend**
 ```sh
