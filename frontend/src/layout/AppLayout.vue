@@ -1,7 +1,6 @@
 <script setup>
 import { useLayout } from '@/layout/composables/layout';
 import { computed } from 'vue';
-import AppFooter from './AppFooter.vue';
 import AppTopbar from './AppTopbar.vue';
 
 // Layout utilities
